@@ -49,7 +49,7 @@ class DictSerializer(serializers.ListSerializer):
 
 class BudgetCategorySerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='budgetapp:budgetcategory-detail')
+        view_name='budget:budgetcategory-detail')
     group = serializers.CharField(source='group.name')
     budget_month = serializers.CharField(write_only=True)
     budget_year = serializers.IntegerField(write_only=True)
@@ -142,7 +142,7 @@ class BudgetCategorySerializer(serializers.HyperlinkedModelSerializer):
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='budgetapp:transaction-detail')
+        view_name='budget:transaction-detail')
     budget_category = serializers.PrimaryKeyRelatedField(
         queryset=BudgetCategory.objects.all(),
     )
@@ -191,10 +191,10 @@ class BudgetCategoryGroupListSerializer(DictSerializer):
 
 class BudgetCategoryGroupSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='budgetapp:budgetcategorygroup-detail')
+        view_name='budget:budgetcategorygroup-detail')
     budget = serializers.HyperlinkedRelatedField(
         queryset=Budget.objects.all(),
-        view_name='budgetapp:budget-detail'
+        view_name='budget:budget-detail'
     )
     budget_categories = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -209,7 +209,7 @@ class BudgetCategoryGroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class BudgetSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='budgetapp:budget-detail')
+        view_name='budget:budget-detail')
     owner = owner_field
     budget_category_groups = BudgetCategoryGroupSerializer(
         many=True,

@@ -28,64 +28,6 @@ class BudgetViewSet(OwnerMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         return Budget.objects.filter(owner=self.request.user)
 
-
-class CopyBudgetForm(forms.Form):
-    source = forms.ModelChoiceField(
-        queryset=Budget.objects.all(), required=False)
-    target_year = forms.IntegerField()
-    target_month = forms.CharField()
-
-    def __init__(self, request_user, *args, **kwargs):
-        self.request_user = request_user
-        super().__init__(*args, **kwargs)
-
-    def clean_source(self):
-        source = self.cleaned_data['source']
-        if source and source.owner != self.request_user:
-            raise forms.ValidationError(
-                'You cannot copy another user\'s budget.'
-            )
-
-        return source
-
-
-class CopyBudgetView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def post(self, request):
-        form = CopyBudgetForm(request.user, request.data)
-        if form.is_valid():
-            params = form.cleaned_data
-            self.copy_budget(
-                params['target_year'],
-                params['target_month'],
-                request.user,
-                params.get('source'),
-            )
-            return HttpResponse()
-        else:
-            return HttpResponseBadRequest()
-
-    def copy_budget(self, target_year, target_month, user, source=None):
-        target, created = Budget.objects.get_or_create(
-            year=target_year,
-            month=target_month,
-            owner=user,
-        )
-
-        # Default the source to the previous month's budget.
-        if not source:
-            source = target.previous
-
-        # If there is a source budget, copy the categories. Otherwise,
-        # delete all categories, since the non-existing budget appears blank
-        # in the UI.
-        if source:
-            target.copy_categories(source)
-        else:
-            target.delete_categories()
-
-
 class BudgetCategoryGroupViewSet(viewsets.ModelViewSet):
     queryset = BudgetCategoryGroup.objects.all()
     serializer_class = BudgetCategoryGroupSerializer
@@ -162,7 +104,7 @@ class ObtainAuthTokenCookieView(ObtainAuthToken):
         response.set_cookie(
             'Token',
             token.key,
-            max_age=60*60*24*14,  # Two weeks.
+            max_age=60*60*24*7,  # Two weeks.
             httponly=True
         )
         return response

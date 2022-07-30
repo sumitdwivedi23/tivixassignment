@@ -22,8 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '80m(ny17)ia@o5kh5r5n59(94sk=ud75&q!&&1k5%ew&pp8t$y'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'FALSE'
+DEBUG = True
 
 ALLOWED_HOSTS = []
 if os.getenv('ALLOWED_HOST'):
@@ -125,7 +126,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
